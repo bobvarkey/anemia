@@ -1,4 +1,3 @@
-import React from 'react';
 import type { CBCValues, Sex } from '../types';
 
 interface Props {
@@ -31,13 +30,13 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
   const canEvaluate = values.hgb !== '' && values.mcv !== '';
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-lg font-semibold text-gray-800 mb-1">Complete Blood Count (CBC)</h2>
-      <p className="text-sm text-gray-500 mb-5">Enter available CBC parameters. Hemoglobin and MCV are required for basic classification.</p>
+    <div className="bg-gray-900 rounded-2xl shadow-sm border border-gray-800 p-6">
+      <h2 className="text-lg font-semibold text-white mb-1">Complete Blood Count (CBC)</h2>
+      <p className="text-sm text-gray-400 mb-5">Enter available CBC parameters. Hemoglobin and MCV are required for basic classification.</p>
 
       {/* Sex selector */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Patient Category</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Patient Category</label>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {sexOptions.map(opt => (
             <button
@@ -46,7 +45,7 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
               className={`py-2 px-3 rounded-lg text-sm font-medium transition-all border ${
                 sex === opt.value
                   ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
-                  : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50'
+                  : 'bg-gray-800 text-gray-300 border-gray-700 hover:border-sky-700 hover:bg-gray-700'
               }`}
             >
               {opt.label}
@@ -59,7 +58,7 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {fields.map(f => (
           <div key={f.key}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-300 mb-1">
               {f.label}
               {(f.key === 'hgb' || f.key === 'mcv') && (
                 <span className="ml-1 text-red-400 text-xs">*</span>
@@ -74,9 +73,9 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
                 value={values[f.key]}
                 onChange={e => onChange(f.key, e.target.value)}
                 placeholder={f.placeholder}
-                className="w-full pr-16 pl-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
+                className="w-full pr-16 pl-3 py-2.5 rounded-lg border border-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all bg-gray-800 text-white hover:bg-gray-700 placeholder-gray-500"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium pointer-events-none">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-medium pointer-events-none">
                 {f.unit}
               </span>
             </div>
@@ -88,18 +87,18 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
         <button
           onClick={onEvaluate}
           disabled={!canEvaluate}
-          className="flex-1 py-3 px-6 bg-sky-600 hover:bg-sky-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md disabled:shadow-none text-sm"
+          className="flex-1 py-3 px-6 bg-sky-600 hover:bg-sky-700 disabled:bg-gray-800 disabled:text-gray-500 text-white font-semibold rounded-xl transition-all shadow-sm hover:shadow-md disabled:shadow-none text-sm"
         >
           Evaluate
         </button>
         <button
           onClick={onReset}
-          className="py-3 px-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl transition-all text-sm"
+          className="py-3 px-5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-all text-sm border border-gray-700"
         >
           Reset
         </button>
       </div>
-      <p className="text-xs text-gray-400 mt-3 text-center">
+      <p className="text-xs text-gray-500 mt-3 text-center">
         * Required fields. For discriminant indices, also provide RBC, MCH, and RDW.
       </p>
     </div>
