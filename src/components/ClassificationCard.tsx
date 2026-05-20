@@ -61,7 +61,7 @@ export default function ClassificationCard({ classification, hgb, mcv, sex }: Pr
             <div className="mt-2 text-xs text-gray-400 space-y-0.5">
               <div>Mild: Hgb ≥ {classification.hgbThreshold.mild} g/dL</div>
               <div>Moderate: Hgb ≥ {classification.hgbThreshold.moderate} g/dL</div>
-              <div>Severe: Hgb < {classification.hgbThreshold.moderate} g/dL</div>
+              <div>Severe: Hgb &lt; {classification.hgbThreshold.moderate} g/dL</div>
             </div>
           )}
         </div>
