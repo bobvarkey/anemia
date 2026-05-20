@@ -1,5 +1,28 @@
 import { useState } from 'react';
-import { Droplet, AlertTriangle, ChevronDown, ChevronUp, Activity, Stethoscope, TestTube } from 'lucide-react';
+import { Droplet, AlertTriangle, ChevronDown, ChevronUp, Activity, Stethoscope, TestTube, Pill, Info } from 'lucide-react';
+
+const commonDITPDrugs = {
+  antibiotics: [
+    'Vancomycin', 'TMP-SMX (Bactrim)', 'Linezolid', 'Cefazolin', 'Piperacillin-tazobactam',
+    'Rifampin', 'Ciprofloxacin', 'Levofloxacin'
+  ],
+  cardiovascular: [
+    'Heparin (unfractionated & LMWH)', 'Amiodarone', 'Digoxin', 'Abciximab', 'Eptifibatide'
+  ],
+  anticonvulsants: [
+    'Valproic acid', 'Carbamazepine', 'Phenytoin', 'Levetiracetam', 'Lamotrigine'
+  ],
+  analgesics: [
+    'Ibuprofen', 'Naproxen', 'Diclofenac', 'Acetaminophen (rare)'
+  ],
+  psychotropic: [
+    'Haloperidol', 'Olanzapine', 'Risperidone', 'Sertraline', 'Fluoxetine'
+  ],
+  other: [
+    'Furosemide', 'Omeprazole/PPIs', 'Methyldopa', 'Interferon', 'Rituximab',
+    'Chemotherapy agents', 'Quinine/Quinidine', 'Gold salts'
+  ]
+};
 
 interface PlateletValues {
   plateletCount: string;
@@ -35,6 +58,7 @@ export default function ThrombocytopeniaEvaluator() {
   const [factors, setFactors] = useState<PatientFactors>(EMPTY_FACTORS);
   const [result, setResult] = useState<string | null>(null);
   const [showAlgorithm, setShowAlgorithm] = useState(false);
+  const [showDrugList, setShowDrugList] = useState(false);
 
   const plateletNum = parseFloat(values.plateletCount);
 
@@ -207,6 +231,80 @@ export default function ThrombocytopeniaEvaluator() {
                 <span className="text-sm text-gray-300">{item.label}</span>
               </label>
             ))}
+          </div>
+
+          {/* Collapsible Drug List */}
+          <div className="mt-4 border-t border-gray-700 pt-4">
+            <button
+              onClick={() => setShowDrugList(!showDrugList)}
+              className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              <Pill className="w-4 h-4" />
+              <span>Common drugs causing thrombocytopenia (DITP)</span>
+              {showDrugList ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+
+            {showDrugList && (
+              <div className="mt-3 bg-gray-900/50 rounded-lg p-4 border border-gray-800 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-start gap-2 mb-3">
+                  <Info className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-gray-400">
+                    Drug-induced thrombocytopenia (DITP) typically occurs 5-10 days after exposure. This is not an exhaustive list — always review ALL medications, OTC drugs, and supplements.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">Antibiotics</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.antibiotics.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">Cardiovascular</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.cardiovascular.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">Anticonvulsants</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.anticonvulsants.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">NSAIDs/Analgesics</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.analgesics.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">Psychotropic</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.psychotropic.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-rose-400 mb-2">Other</h4>
+                    <ul className="space-y-1">
+                      {commonDITPDrugs.other.map(drug => (
+                        <li key={drug} className="text-xs text-gray-400">{drug}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
