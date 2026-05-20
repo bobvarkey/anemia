@@ -7,6 +7,7 @@ import DiscriminantTable from './components/DiscriminantTable';
 import CausesPanel from './components/CausesPanel';
 import ReferenceRanges from './components/ReferenceRanges';
 import ThrombocytopeniaEvaluator from './components/ThrombocytopeniaEvaluator';
+import TestSuggestionAlgorithm from './components/TestSuggestionAlgorithm';
 import { Microscope, AlertTriangle, Droplet } from 'lucide-react';
 
 const EMPTY_CBC: CBCValues = { hgb: '', rbc: '', mcv: '', mch: '', mchc: '', rdw: '', hct: '' };
@@ -145,6 +146,9 @@ export default function App() {
 
             {/* Reference ranges */}
             <ReferenceRanges />
+
+            {/* Next Test Algorithm */}
+            <TestSuggestionAlgorithm />
 
             {/* About section */}
             <div className="bg-gray-900 rounded-2xl shadow-sm border border-gray-800 p-6">
