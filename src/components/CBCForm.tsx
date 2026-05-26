@@ -1,4 +1,5 @@
 import type { CBCValues, Sex } from '../types';
+import Tooltip from './Tooltip';
 
 interface Props {
   values: CBCValues;
@@ -9,14 +10,59 @@ interface Props {
   onReset: () => void;
 }
 
+const paramInfo: Record<keyof CBCValues, { what: string; normal: string; low: string; high: string }> = {
+  hgb: {
+    what: 'Hemoglobin (Hgb) — the oxygen-carrying protein inside red blood cells, measured in g/dL.',
+    normal: 'Men: 13.5–17.5 g/dL | Women: 12.0–16.0 g/dL | Pregnant: ≥ 11.0 g/dL | Children: 11.0–14.0 g/dL',
+    low: 'Anemia — from iron/B12/folate deficiency, blood loss, hemolysis, chronic disease, bone marrow failure, or thalassemia.',
+    high: 'Polycythemia — dehydration, chronic hypoxia (COPD, high altitude), polycythemia vera, or EPO-secreting tumors.',
+  },
+  rbc: {
+    what: 'RBC Count — number of red blood cells per litre of blood (×10¹²/L). Used in multiple discriminant indices.',
+    normal: 'Men: 4.5–5.9 ×10¹²/L | Women: 4.0–5.2 ×10¹²/L | Children: 3.8–5.2 ×10¹²/L',
+    low: 'Anemia, bone marrow suppression, hemolysis, nutritional deficiencies, or chronic kidney disease.',
+    high: 'Polycythemia vera, chronic hypoxia, dehydration, or spurious elevation.',
+  },
+  mcv: {
+    what: 'Mean Corpuscular Volume (MCV) — average size of a single red blood cell in femtolitres (fL). Key for morphological classification.',
+    normal: 'Adults & children (>6y): 80–100 fL',
+    low: 'Microcytic anemia — iron deficiency, thalassemia, sideroblastic anemia, anemia of chronic disease, or lead poisoning.',
+    high: 'Macrocytic anemia — B12/folate deficiency, liver disease, hypothyroidism, alcohol use, medications (hydroxyurea, methotrexate), or myelodysplasia.',
+  },
+  mch: {
+    what: 'Mean Corpuscular Hemoglobin (MCH) — average amount of hemoglobin per red cell in picograms (pg). Parallels MCV in most cases.',
+    normal: 'Adults: 27–33 pg | Children: 24–30 pg',
+    low: 'Hypochromia — iron deficiency, thalassemia, or sideroblastic anemia. Closely mirrors a low MCV.',
+    high: 'Hyperchromia — macrocytic states (B12/folate deficiency), or hereditary spherocytosis.',
+  },
+  mchc: {
+    what: 'Mean Corpuscular Hemoglobin Concentration (MCHC) — hemoglobin concentration per unit volume of RBCs (g/dL). Assesses degree of hemoglobin packing.',
+    normal: '32–36 g/dL',
+    low: 'Hypochromic cells — iron deficiency anemia or thalassemia (cells are pale and under-filled with hemoglobin).',
+    high: 'Spherocytosis (hereditary or immune hemolysis) — cells are small and densely packed. Also seen in severe burns or HbC disease.',
+  },
+  rdw: {
+    what: 'Red Cell Distribution Width (RDW) — coefficient of variation in red cell size. Reflects anisocytosis (inequality of RBC sizes).',
+    normal: '11.5–14.5%',
+    low: 'Rarely clinically significant; may be seen in aplastic states where all cells are uniformly abnormal.',
+    high: 'Anisocytosis — iron deficiency anemia (earliest sign), mixed deficiency (iron + B12/folate), hemolytic anemia, recent transfusion, or early response to treatment. A high RDW with low MCV strongly suggests IDA over thalassemia.',
+  },
+  hct: {
+    what: 'Hematocrit (Hct) — proportion of blood volume occupied by red blood cells, expressed as a percentage.',
+    normal: 'Men: 41–53% | Women: 36–46% | Pregnant: 33–44% | Children: 35–45%',
+    low: 'Anemia — mirrors hemoglobin; reduced in all causes of anemia. Hct ≈ 3 × Hgb is a useful approximation.',
+    high: 'Polycythemia, dehydration, chronic hypoxia. Hct > 60% significantly raises thrombotic risk.',
+  },
+};
+
 const fields: { key: keyof CBCValues; label: string; unit: string; placeholder: string; min: number; max: number }[] = [
-  { key: 'hgb',  label: 'Hemoglobin',  unit: 'g/dL',       placeholder: 'e.g. 9.5',   min: 1,   max: 20  },
-  { key: 'rbc',  label: 'RBC Count',   unit: '×10¹²/L',    placeholder: 'e.g. 3.8',   min: 0.5, max: 8   },
-  { key: 'mcv',  label: 'MCV',         unit: 'fL',          placeholder: 'e.g. 68',    min: 40,  max: 140 },
-  { key: 'mch',  label: 'MCH',         unit: 'pg',          placeholder: 'e.g. 22',    min: 10,  max: 50  },
-  { key: 'mchc', label: 'MCHC',        unit: 'g/dL',        placeholder: 'e.g. 31',    min: 20,  max: 40  },
-  { key: 'rdw',  label: 'RDW',         unit: '%',           placeholder: 'e.g. 16.5',  min: 8,   max: 30  },
-  { key: 'hct',  label: 'Hematocrit',  unit: '%',           placeholder: 'e.g. 30',    min: 5,   max: 65  },
+  { key: 'hgb',  label: 'Hemoglobin',  unit: 'g/dL',    placeholder: 'e.g. 9.5',  min: 1,   max: 20  },
+  { key: 'rbc',  label: 'RBC Count',   unit: '×10¹²/L', placeholder: 'e.g. 3.8',  min: 0.5, max: 8   },
+  { key: 'mcv',  label: 'MCV',         unit: 'fL',       placeholder: 'e.g. 68',   min: 40,  max: 140 },
+  { key: 'mch',  label: 'MCH',         unit: 'pg',       placeholder: 'e.g. 22',   min: 10,  max: 50  },
+  { key: 'mchc', label: 'MCHC',        unit: 'g/dL',     placeholder: 'e.g. 31',   min: 20,  max: 40  },
+  { key: 'rdw',  label: 'RDW',         unit: '%',        placeholder: 'e.g. 16.5', min: 8,   max: 30  },
+  { key: 'hct',  label: 'Hematocrit',  unit: '%',        placeholder: 'e.g. 30',   min: 5,   max: 65  },
 ];
 
 const sexOptions: { value: Sex; label: string }[] = [
@@ -32,7 +78,9 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
   return (
     <div className="bg-gray-900 rounded-2xl shadow-sm border border-gray-800 p-6">
       <h2 className="text-lg font-semibold text-white mb-1">Complete Blood Count (CBC)</h2>
-      <p className="text-sm text-gray-400 mb-5">Enter available CBC parameters. Hemoglobin and MCV are required for basic classification.</p>
+      <p className="text-sm text-gray-400 mb-5">
+        Enter available parameters. Hover the <span className="inline-flex items-center gap-0.5 text-sky-400 font-medium"><span className="text-xs">ⓘ</span></span> icon for a description, normal range, and clinical significance of each value.
+      </p>
 
       {/* Sex selector */}
       <div className="mb-5">
@@ -58,11 +106,12 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {fields.map(f => (
           <div key={f.key}>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="flex items-center text-sm font-medium text-gray-300 mb-1">
               {f.label}
               {(f.key === 'hgb' || f.key === 'mcv') && (
                 <span className="ml-1 text-red-400 text-xs">*</span>
               )}
+              <Tooltip content={paramInfo[f.key]} />
             </label>
             <div className="relative">
               <input
@@ -99,7 +148,7 @@ export default function CBCForm({ values, sex, onChange, onSexChange, onEvaluate
         </button>
       </div>
       <p className="text-xs text-gray-500 mt-3 text-center">
-        * Required fields. For discriminant indices, also provide RBC, MCH, and RDW.
+        * Required. For discriminant indices, also provide RBC, MCH, and RDW.
       </p>
     </div>
   );
